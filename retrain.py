@@ -21,8 +21,11 @@ feature_extractor_url = "https://tfhub.dev/google/imagenet/mobilenet_v2_100_224/
 def feature_extractor(x):
     feature_extractor_module = hub.Module(feature_extractor_url)
     return feature_extractor_module(x)
-
-
+data_root = tf.keras.utils.get_file(
+  'flower_photos','https://storage.googleapis.com/download.tensorflow.org/example_images/flower_photos.tgz',
+   untar=True)
+image_generator = tf.keras.preprocessing.image.ImageDataGenerator(rescale=1/255)
+image_data = image_generator.flow_from_directory(str(data_root))
 IMAGE_SIZE = hub.get_expected_image_size(hub.Module(feature_extractor_url))
 
 image_data = image_generator.flow_from_directory(str(data_root), target_size=IMAGE_SIZE)
@@ -38,6 +41,7 @@ model = tf.keras.Sequential([
 model.summary()
 
 #Initialize the TFHub module
+sess = K.get_session()
 init = tf.global_variables_initializer()
 sess.run(init)
 

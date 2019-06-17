@@ -40,7 +40,8 @@ image_data = image_generator.flow_from_directory(str(data_root), target_size=IMA
 
 
 sess = K.get_session()
-init = tf.global_variables_initializer()
+#init = tf.global_variables_initializer()
+init = tf.compat.v1.global_variables_initializer()
 
 sess.run(init)
 
@@ -49,21 +50,25 @@ sess.run(init)
 #Get the file by using tf.keras.utils.get_file('image_name','image_url')
 #Then Image.open(variable_above).resize(IMAGE_SIZE)
 
-bush_house = tf.keras.utils.get_file('bush_house.jpg','https://en.wikipedia.org/wiki/Bush_House#/media/File:Bush_House,_Aldwych_(geograph_4238525).jpg')
-bush_house = Image.open(bush_house).resize(IMAGE_SIZE)
+#bush_house = tf.keras.utils.get_file('bush_house.jpg','https://en.wikipedia.org/wiki/Bush_House#/media/File:Bush_House,_Aldwych_(geograph_4238525).jpg')
+bush_house = Image.open('bush_house.jpg').resize(IMAGE_SIZE)
 
 bush_house = np.array(bush_house)/255.0
 #bush_house.shape
  
- #Predict the class
- result = classifier_model.predict(bush_house[np.newaxis])
- predicted_class = np.argmax(result[0],axis=-1)
+#Predict the class
+result = classifier_model.predict(bush_house[np.newaxis])
+predicted_class = np.argmax(result[0],axis=-1)
 
- #Decode the prediction class
- labels_path = tf.keras.utils.get_file('ImageNetLabels.txt','https://storage.googleapis.com/download.tensorflow.org/data/ImageNetLabels.txt')
- imagenet_labels = np.array(open(labels_path).read().splitlines())
+#Decode the prediction class
+labels_path = tf.keras.utils.get_file('ImageNetLabels.txt','https://storage.googleapis.com/download.tensorflow.org/data/ImageNetLabels.txt')
+imagenet_labels = np.array(open(labels_path).read().splitlines())
 
- predicted_class_name = imagenet_labels[predicted_class]
- print("predicted_class_name")
+predicted_class_name = imagenet_labels[predicted_class]
+#print("predicted_class_name")
+plt.imshow(bush_house)
+plt.axis('off')
+predicted_class_name = imagenet_labels[predicted_class]
+_ = plt.title("Prediction: " + predicted_class_name)
 
 
